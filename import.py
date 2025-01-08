@@ -76,7 +76,6 @@ def preprocess_text_not_spam():
         text = not_spam_data_model['text'].iloc[i].lower()
         text = text.translate(str.maketrans('', '' , string.punctuation)).split()
         text = [stemmer.stem(word) for word in text if word not in stopword_set]
-        text = ' '.join(text)
         corpus_not_spam.append(text)
     
     return corpus_not_spam
@@ -84,27 +83,24 @@ def preprocess_text_not_spam():
 corpus_not_spam = preprocess_text_not_spam()
 
 
-
-
-
 dict_spam = {}
-
 for i in corpus_spam:
     for j in i:
         dict_spam[j] = dict_spam.get(j, 0) + 1
     
-print(dict_spam)
-
-sorted_dict_spam = dict(sorted(dict_spam.items(), key=lambda item: item[1], reverse=True))
-
-print("Words sorted by frequency in spam emails:")
-for word, count in sorted_dict_spam.items():
-    print(f"{word}: {count}")
+dict_not_spam = {}
+for i in corpus_not_spam:
+    for j in i:
+        dict_not_spam[j] = dict_not_spam.get(j, 0) + 1
 
 
+dict_tf_spam = {}
 
+for i in corpus_spam:
+    for j in i:
+        dict_tf_spam[j] = dict_tf_spam.get(j, 0) + 1 / len(corpus_spam)
 
-
+print(dict_tf_spam)
 #df['tokens'] = df['text'].apply(preprocess_text)
 #spam_keywords = ["free", "win", "prize", "limited", "offer", "exclusive", "urgent", "money"]
 
