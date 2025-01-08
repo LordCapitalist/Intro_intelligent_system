@@ -15,7 +15,7 @@ def Import():
     print(data)
     spam_data = data[data['label_num'] == 1]  
     not_spam_data = data[data['label_num'] == 0]
-
+ 
     print("Spam data:")
     print(spam_data)
         
