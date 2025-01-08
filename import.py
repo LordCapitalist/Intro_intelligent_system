@@ -1,7 +1,6 @@
 import openpyxl
 import string
 import pandas as pd
-import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -16,10 +15,19 @@ nltk.download('punkt_tab')
 nltk.download('stopwords')
 stopword_set = set(stopwords.words('english'))
 
+#stop_word_set = list(stopwords.words('english'))
+#print(stopword_set)
 
 def Import():
     file_path = ".\\Behandlet_enron_data.xlsx"
     df = pd.read_excel(file_path)
+    #print(df)
+    
+    #print("Spam data:")
+    #print(spam_data)
+        
+    #print("Not spam data:")
+    #print(not_spam_data)
     return df
 
 df = Import()
@@ -45,6 +53,18 @@ def preprocess_text_spam():
         text = [stemmer.stem(word) for word in text if word not in stopword_set]
         corpus_spam.append(text)
 
+  
+    #for i in range(len(df)):
+        #text = df['text'].iloc[i].lower()
+        #text = text.translate(str.maketrans('', '' , string.punctuation)).split()
+        #text = [stemmer.stem(word) for word in text if word not in stopword_set]
+
+        #tokens = word_tokenize(text.lower())
+        #tokens = tokens.translate(str.maketrans('', '' , string.punctuation)).split()
+        #tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
+        #text = ' '.join(text)
+        #corpus.append(text)
+    
     return corpus_spam
     
 corpus_spam = preprocess_text_spam()
@@ -89,59 +109,25 @@ for i in corpus_not_spam:
     for j in i:
         dict_tf_not_spam[j] = dict_tf_not_spam.get(j, 0) + 1 / len(corpus_not_spam)
 
+print(dict_tf_not_spam)
 
+sorted_dict_spam = dict(sorted(dict_tf_spam.items(), key=lambda item: item[1], reverse=True))
 
-def check_tf(word):
-    if word in dict_tf_spam:
-        tf_spam = dict_tf_spam[word]
-    else:
-        tf_spam = 0
-        
-    if word in dict_tf_not_spam:
-        tf_not_spam = dict_tf_not_spam[word]
-    else:
-        tf_not_spam = 0
-        
-    if tf_spam > tf_not_spam:
-        return tf_spam
-    else:
-        return -tf_not_spam
+print("Words sorted by frequency in spam emails:")
+for word, count in sorted_dict_spam.items():
+    print(f"{word}: {count}")
+#df['tokens'] = df['text'].apply(preprocess_text)
+#spam_keywords = ["free", "win", "prize", "limited", "offer", "exclusive", "urgent", "money"]
 
-    
+#def recognize_spam(tokens):
+    #spam_count = sum(1 for token in tokens if token in spam_keywords)
+    #if spam_count > 0:
+        #return "Spam"
+    #else:
+        #return "Not Spam"
 
+#data['spam_recognition'] = data['tokens'].apply(recognize_spam)
 
-def check_mail(mail):
-    mail = mail.lower()
-    mail = mail.translate(str.maketrans('', '' , string.punctuation)).split()
-    mail = [stemmer.stem(word) for word in mail if word not in stopword_set]
-    sum = 0
-    for i in mail:
-        sum += check_tf(i)
-    
-    if sum > 0:
-        return 1
-    
-    if sum < 0:
-        return 0
+#print("\nData with Spam Recognition:")
+#print(data[['text', 'spam_recognition']])
 
-
-
- 
-def test():
-    wrong = 0
-    right = 0
-    for i in range(len(spam_data_test)):
-        text = spam_data_test['text'].iloc[i]
-        mail = text
-
-        if check_mail(mail) == 1:
-            right += 1
-        else:
-            wrong += 1
-
-    print(right/len(spam_data_test) *100 , "percentage of spam mails are classified correctly") 
-
-
-
-
-test()
