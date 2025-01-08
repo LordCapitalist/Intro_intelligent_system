@@ -108,8 +108,7 @@ def check_tf(word):
     
 
 
-def check_mail():
-    mail = input("Enter mail: ")
+def check_mail(mail):
     mail = mail.lower()
     mail = mail.translate(str.maketrans('', '' , string.punctuation)).split()
     mail = [stemmer.stem(word) for word in mail if word not in stopword_set]
@@ -126,6 +125,21 @@ def check_mail():
 
 
  
+def test():
+    wrong = 0
+    right = 0
+    for i in range(len(spam_data_test)):
+        text = spam_data_test['text'].iloc[i]
+        mail = text
 
-check_mail()
+        if check_mail(mail) == 1:
+            right += 1
+        else:
+            wrong += 1
 
+    print(right/len(spam_data_test) *100 , "percentage of spam mails are classified correctly") 
+
+
+
+
+test()
