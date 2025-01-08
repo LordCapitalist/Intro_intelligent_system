@@ -83,9 +83,6 @@ def preprocess_text_not_spam():
 corpus_not_spam = preprocess_text_not_spam()
 
 
-
-
-
 dict_spam = {}
 for i in corpus_spam:
     for j in i:
@@ -97,10 +94,13 @@ for i in corpus_not_spam:
         dict_not_spam[j] = dict_not_spam.get(j, 0) + 1
 
 
+dict_tf_spam = {}
 
+for i in corpus_spam:
+    for j in i:
+        dict_tf_spam[j] = dict_tf_spam.get(j, 0) + 1 / len(corpus_spam)
 
-
-
+print(dict_tf_spam)
 #df['tokens'] = df['text'].apply(preprocess_text)
 #spam_keywords = ["free", "win", "prize", "limited", "offer", "exclusive", "urgent", "money"]
 
