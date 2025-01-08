@@ -1,12 +1,13 @@
+import openpyxl
 import pandas as pd
 
 
 def Import():
-    file_path = ".\\spam_assassin.csv"
-    data = pd.read_csv(file_path)
+    file_path = ".\\Behandlet_enron_data.xlsx"
+    data = pd.read_excel(file_path)
     print(data)
-    spam_data = data[data['target'] == 1]  
-    not_spam_data = data[data['target'] == 0]
+    spam_data = data[data['label_num'] == 1]  
+    not_spam_data = data[data['label_num'] == 0]
 
     print("Spam data:")
     print(spam_data)
