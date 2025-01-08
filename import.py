@@ -16,6 +16,7 @@ stopword_set = set(stopwords.words('english'))
 #stop_word_set = list(stopwords.words('english'))
 #print(stopword_set)
 
+
 def Import():
     file_path = ".\\Behandlet_enron_data.xlsx"
     df = pd.read_excel(file_path)
@@ -33,23 +34,16 @@ spam_data = df[df['label_num'] == 1]
 not_spam_data = df[df['label_num'] == 0]
 
 
-def preprocess_text():
+def preprocess_text_spam():
     corpus_spam = []
-    corpus_not_spam = []
+    
     for i in range(len(spam_data)):
         text = spam_data['text'].iloc[i].lower()
         text = text.translate(str.maketrans('', '' , string.punctuation)).split()
         text = [stemmer.stem(word) for word in text if word not in stopword_set]
         text = ' '.join(text)
         corpus_spam.append(text)
-    
-    for i in range(len(not_spam_data)):
-        text = not_spam_data['text'].iloc[i].lower()
-        text = text.translate(str.maketrans('', '' , string.punctuation)).split()
-        text = [stemmer.stem(word) for word in text if word not in stopword_set]
-        text = ' '.join(text)
-        corpus_not_spam.append(text)
-    
+  
     #for i in range(len(df)):
         #text = df['text'].iloc[i].lower()
         #text = text.translate(str.maketrans('', '' , string.punctuation)).split()
@@ -61,9 +55,48 @@ def preprocess_text():
         #text = ' '.join(text)
         #corpus.append(text)
     
-    print(corpus_spam , corpus_not_spam)
+    return corpus_spam
     
-preprocess_text()
+corpus_spam = preprocess_text_spam()
+
+
+def preprocess_text_not_spam():
+    corpus_not_spam = []
+    
+    for i in range(len(not_spam_data)):
+        text = not_spam_data['text'].iloc[i].lower()
+        text = text.translate(str.maketrans('', '' , string.punctuation)).split()
+        text = [stemmer.stem(word) for word in text if word not in stopword_set]
+        text = ' '.join(text)
+        corpus_not_spam.append(text)
+    
+    return corpus_not_spam
+
+corpus_not_spam = preprocess_text_not_spam()
+
+def count_data():
+    wordcount = {}
+    for words in corpus_spam:
+        words = words.split()
+        for word in words:
+            if word not in wordcount:
+                wordcount[word] = 1
+            else:
+                wordcount[word] += 1
+        
+    
+    for words in corpus_not_spam:
+        words = words.split()
+        for word in words:
+            if word not in wordcount:
+                wordcount[word] = 1
+            else:
+                wordcount[word] += 1
+    
+    return wordcount
+
+
+count_data()
 
 #df['tokens'] = df['text'].apply(preprocess_text)
 #spam_keywords = ["free", "win", "prize", "limited", "offer", "exclusive", "urgent", "money"]
