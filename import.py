@@ -108,6 +108,12 @@ for i in corpus_not_spam:
         dict_tf_not_spam[j] = dict_tf_not_spam.get(j, 0) + 1 / len(corpus_not_spam)
 
 print(dict_tf_not_spam)
+
+sorted_dict_spam = dict(sorted(dict_tf_spam.items(), key=lambda item: item[1], reverse=True))
+
+print("Words sorted by frequency in spam emails:")
+for word, count in sorted_dict_spam.items():
+    print(f"{word}: {count}")
 #df['tokens'] = df['text'].apply(preprocess_text)
 #spam_keywords = ["free", "win", "prize", "limited", "offer", "exclusive", "urgent", "money"]
 
