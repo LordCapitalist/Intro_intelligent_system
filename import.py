@@ -100,7 +100,14 @@ for i in corpus_spam:
     for j in i:
         dict_tf_spam[j] = dict_tf_spam.get(j, 0) + 1 / len(corpus_spam)
 
-print(dict_tf_spam)
+
+dict_tf_not_spam = {}
+
+for i in corpus_not_spam:
+    for j in i:
+        dict_tf_not_spam[j] = dict_tf_not_spam.get(j, 0) + 1 / len(corpus_not_spam)
+
+print(dict_tf_not_spam)
 #df['tokens'] = df['text'].apply(preprocess_text)
 #spam_keywords = ["free", "win", "prize", "limited", "offer", "exclusive", "urgent", "money"]
 
