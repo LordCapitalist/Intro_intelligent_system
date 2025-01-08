@@ -93,7 +93,13 @@ for i in corpus_spam:
     for j in i:
         dict_spam[j] = dict_spam.get(j, 0) + 1
     
-print(len(dict_spam))
+print(dict_spam)
+
+sorted_dict_spam = dict(sorted(dict_spam.items(), key=lambda item: item[1], reverse=True))
+
+print("Words sorted by frequency in spam emails:")
+for word, count in sorted_dict_spam.items():
+    print(f"{word}: {count}")
 
 
 
