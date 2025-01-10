@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 
 from nltk.stem.porter import PorterStemmer
 
-hej
+
 
 stemmer = PorterStemmer()
 
@@ -18,7 +18,7 @@ stopword_set = set(stopwords.words('english'))
 
 
 def Import():
-    file_path = ".\\Behandlet_enron_data.xlsx"
+    file_path = ".\\Main\\Behandlet_enron_data.xlsx"
     df = pd.read_excel(file_path)
     return df
 
