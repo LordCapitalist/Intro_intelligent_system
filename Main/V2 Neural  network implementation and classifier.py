@@ -102,12 +102,6 @@ class EmailClassifier(nn.Module):
         self.fc6 = nn.Linear(16, 2)
         self.dropout = nn.Dropout(0.5)
         
-        
-        
-        
-        
-        
-
         self.leaky_relu = nn.LeakyReLU()
 
     def forward(self, x):

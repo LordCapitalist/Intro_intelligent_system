@@ -69,7 +69,7 @@ model = torch.load('email_classifier_model.pth')
 model.eval()  # Set model to evaluation mode
 
 # Example email
-example_email = "View in browser Greetings Sleeper, We are proud to announce that Dune: Awakening will be one of the first games to feature NVIDIA’s DLSS 4 technology with Multi Frame Generation, along with Razer’s next-gen Chroma and Haptics integration. Witness colossal sandworms break the surface of the dunes, dynamically pushing sand aside and spewing it into the air, as DLSS 4 with Multi Frame Generation enhances both the beauty and performance of your experience, including those last moments before the worm consumes you whole, or you barely escape."
+example_email = ""
 
 # Preprocess the email
 email_vector = preprocess_email(example_email, glove_embeddings)
