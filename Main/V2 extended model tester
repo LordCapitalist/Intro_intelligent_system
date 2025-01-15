@@ -1,0 +1,86 @@
+import torch
+import re
+import numpy as np
+import nltk
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
+
+# Initialize stemmer and stopword set
+stemmer = PorterStemmer()
+nltk.download('stopwords')
+stopword_set = set(stopwords.words('english'))
+
+# Define the EmailClassifier class (same architecture as before)
+class EmailClassifier(torch.nn.Module):
+    def __init__(self):
+        super(EmailClassifier, self).__init__()
+        self.fc1 = torch.nn.Linear(50, 256)
+        self.bn1 = torch.nn.BatchNorm1d(256)
+        self.fc2 = torch.nn.Linear(256, 128)
+        self.bn2 = torch.nn.BatchNorm1d(128)
+        self.fc3 = torch.nn.Linear(128, 64)
+        self.bn3 = torch.nn.BatchNorm1d(64)
+        self.fc4 = torch.nn.Linear(64, 32)
+        self.bn4 = torch.nn.BatchNorm1d(32)
+        self.fc5 = torch.nn.Linear(32, 16)
+        self.bn5 = torch.nn.BatchNorm1d(16)
+        self.fc6 = torch.nn.Linear(16, 2)
+        self.dropout = torch.nn.Dropout(0.5)
+        self.leaky_relu = torch.nn.LeakyReLU()
+
+    def forward(self, x):
+        x = self.leaky_relu(self.bn1(self.fc1(x)))
+        x = self.leaky_relu(self.bn2(self.fc2(x)))
+        x = self.leaky_relu(self.bn3(self.fc3(x)))
+        x = self.leaky_relu(self.bn4(self.fc4(x)))
+        x = self.leaky_relu(self.bn5(self.fc5(x)))
+        x = self.fc6(x)
+        return x
+
+# Load the GloVe embeddings (same as in the original script)
+def load_glove_embeddings(file_path):
+    embeddings = {}
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            values = line.split()
+            word = values[0]
+            vector = np.asarray(values[1:], dtype='float32')
+            embeddings[word] = vector
+    return embeddings
+
+glove_file_path = "Main\\glove.6b.50d.txt"
+glove_embeddings = load_glove_embeddings(glove_file_path)
+
+# Preprocess a single email
+def preprocess_email(email_text, embeddings, embedding_dim=50):
+    email_text = email_text.lower()
+    email_text = re.sub(r'[^a-z0-9\s]', '', email_text)  # Remove punctuation
+    words = email_text.split()
+    words = [stemmer.stem(word) for word in words if word not in stopword_set]
+    word_vectors = [embeddings.get(word, np.zeros(embedding_dim)) for word in words]
+    if len(word_vectors) > 0:
+        email_vector = np.mean(word_vectors, axis=0)
+    else:
+        email_vector = np.zeros(embedding_dim)  # Zero vector for empty email
+    return torch.tensor(email_vector, dtype=torch.float32).unsqueeze(0)  # Add batch dimension
+
+# Load the saved model
+model = torch.load('email_classifier_model.pth')
+model.eval()  # Set model to evaluation mode
+
+# Example email
+example_email = "View in browser Greetings Sleeper, We are proud to announce that Dune: Awakening will be one of the first games to feature NVIDIA’s DLSS 4 technology with Multi Frame Generation, along with Razer’s next-gen Chroma and Haptics integration. Witness colossal sandworms break the surface of the dunes, dynamically pushing sand aside and spewing it into the air, as DLSS 4 with Multi Frame Generation enhances both the beauty and performance of your experience, including those last moments before the worm consumes you whole, or you barely escape."
+
+# Preprocess the email
+email_vector = preprocess_email(example_email, glove_embeddings)
+
+# Classify the email
+with torch.no_grad():
+    output = model(email_vector)  # Forward pass
+    prediction = torch.argmax(output, axis=1).item()  # Get the predicted class
+
+# Output the prediction
+if prediction == 1:
+    print("The email is classified as: Spam")
+else:
+    print("The email is classified as: Not Spam")

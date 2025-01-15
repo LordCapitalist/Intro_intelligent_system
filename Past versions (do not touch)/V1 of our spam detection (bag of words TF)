@@ -49,7 +49,7 @@ def preprocess_text_spam():
     
 corpus_spam = preprocess_text_spam()
 
-
+print(corpus_spam)
 
 def preprocess_text_not_spam():
     corpus_not_spam = []
