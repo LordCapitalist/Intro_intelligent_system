@@ -8,8 +8,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # For TF-IDF vector
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import ZModule
+import ZModule as ZModule
 import openpyxl
+
 
 # Download necessary NLTK resources
 nltk.download('punkt')  # Tokenizer
@@ -32,7 +33,7 @@ def preprocess_text(corpus):
 
 # Function to import data from an Excel file
 def import_data():
-    file_path = ".\\Behandlet_enron_data.xlsx"
+    file_path = "Main\\Behandlet_enron_data.xlsx"
     df = pd.read_excel(file_path)
     return df
 

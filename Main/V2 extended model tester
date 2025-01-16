@@ -3,7 +3,12 @@ import re
 import numpy as np
 import nltk
 from nltk.stem.porter import PorterStemmer
+import pandas as pd
 from nltk.corpus import stopwords
+
+data_file_path = "Data\\Datafiles\\spam_ham_dataset.csv"
+df = pd.read_csv(data_file_path)
+
 
 # Initialize stemmer and stopword set
 stemmer = PorterStemmer()
@@ -48,7 +53,7 @@ def load_glove_embeddings(file_path):
             embeddings[word] = vector
     return embeddings
 
-glove_file_path = "Main\\glove.6b.50d.txt"
+glove_file_path = "Main\\Pre_trained_word_vectors\\glove.6B.50d.txt"
 glove_embeddings = load_glove_embeddings(glove_file_path)
 
 # Preprocess a single email
@@ -68,19 +73,34 @@ def preprocess_email(email_text, embeddings, embedding_dim=50):
 model = torch.load('email_classifier_model.pth')
 model.eval()  # Set model to evaluation mode
 
-# Example email
-example_email = ""
+True_values = df['label_num'].values
 
-# Preprocess the email
-email_vector = preprocess_email(example_email, glove_embeddings)
 
-# Classify the email
-with torch.no_grad():
-    output = model(email_vector)  # Forward pass
-    prediction = torch.argmax(output, axis=1).item()  # Get the predicted class
+email_vector = []
 
-# Output the prediction
-if prediction == 1:
-    print("The email is classified as: Spam")
-else:
-    print("The email is classified as: Not Spam")
+for i in range(len(df)):
+    email_vector.append(preprocess_email(df['text'].iloc[i], glove_embeddings))
+
+
+# check every single email in the list email_vector and predict if it is spam or not
+good = 0
+count = 0
+
+
+for i in range(len(email_vector)):
+    output = model(email_vector[i])
+    _, predicted = torch.max(output, 1)
+    if predicted == 1 and True_values[i] == 1:
+        good = good + 1
+        count += 1
+    elif predicted == 0 and True_values[i] == 0:
+        good = good + 1
+        count += 1
+    elif predicted == 1 and True_values[i] == 0:
+        count +=1
+    elif predicted == 0 and True_values[i] == 1:
+        count +=1
+    else:
+        print("Error in classification")
+
+print(good/count)
