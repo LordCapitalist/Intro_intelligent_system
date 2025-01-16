@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer  # For TF-IDF vector
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import ZModule
+import ZModule as ZModule
 
 # Download necessary NLTK resources
 nltk.download('punkt')  # Tokenizer
