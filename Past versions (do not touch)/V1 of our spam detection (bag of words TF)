@@ -12,6 +12,17 @@ from nltk.stem.porter import PorterStemmer
 
 stemmer = PorterStemmer()
 
+
+def Import():
+    file_path = "Data\\Datafiles\\spam_ham_dataset.csv"
+    df1 = pd.read_csv(file_path)
+    return df1
+
+df1 = Import()
+
+
+
+
 nltk.download('punkt_tab')
 nltk.download('stopwords')
 stopword_set = set(stopwords.words('english'))
@@ -26,12 +37,28 @@ df = Import()
 spam_data = df[df['label_num'] == 1]  
 not_spam_data = df[df['label_num'] == 0]
 
+spam_data1= df1[df1['label_num'] == 1]
+
 spam_data_model = spam_data.head(spam_data.shape[0] - 300)
 spam_data_test = spam_data.tail(300)
 
 
 not_spam_data_model = not_spam_data.head(not_spam_data.shape[0] - 300)
 not_spam_data_test = not_spam_data.tail(300)
+
+
+def preprocess_text_spam_test():
+    corpus_spam1 = []
+    
+    for i in range(len(spam_data_model)):
+        text = spam_data1['text'].iloc[i].lower()
+        text = text.translate(str.maketrans('', '' , string.punctuation)).split()
+        text = [stemmer.stem(word) for word in text if word not in stopword_set]
+        corpus_spam1.append(text)
+
+    return corpus_spam1
+    
+corpus_spam1 = preprocess_text_spam_test()
 
 
 
@@ -49,7 +76,7 @@ def preprocess_text_spam():
     
 corpus_spam = preprocess_text_spam()
 
-print(corpus_spam)
+
 
 def preprocess_text_not_spam():
     corpus_not_spam = []
@@ -130,18 +157,19 @@ def check_mail(mail):
 def test():
     wrong = 0
     right = 0
-    for i in range(len(spam_data_test)):
-        text = spam_data_test['text'].iloc[i]
+    for i in range(len(spam_data1)):
+        text = spam_data1['text'].iloc[i]
         mail = text
 
+        # Check the classification
         if check_mail(mail) == 1:
             right += 1
         else:
             wrong += 1
 
-    print(right/len(spam_data_test) *100 , "percentage of spam mails are classified correctly") 
-
-
+    # Use spam_data1 length for accuracy calculation
+    accuracy = right / len(spam_data1) * 100
+    print(f"{accuracy:.2f}% of spam mails are classified correctly")
 
 
 test()
