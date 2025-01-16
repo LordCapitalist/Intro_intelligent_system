@@ -47,7 +47,7 @@ def load_glove_embeddings(file_path):
             embeddings[word] = vector
     return embeddings
 
-glove_file_path = "Main\\glove.6b.50d.txt"
+glove_file_path = ".\\glove.6B.50d.txt"
 glove_embeddings = load_glove_embeddings(glove_file_path)
 
 # Get the word vector for a single word
